@@ -52,6 +52,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				status: {
+					'on-time': 'hsl(var(--status-on-time))',
+					'on-time-foreground': 'hsl(var(--status-on-time-foreground))',
+					delayed: 'hsl(var(--status-delayed))',
+					'delayed-foreground': 'hsl(var(--status-delayed-foreground))',
+					cancelled: 'hsl(var(--status-cancelled))',
+					'cancelled-foreground': 'hsl(var(--status-cancelled-foreground))',
+					boarding: 'hsl(var(--status-boarding))',
+					'boarding-foreground': 'hsl(var(--status-boarding-foreground))',
+					arrived: 'hsl(var(--status-arrived))',
+					'arrived-foreground': 'hsl(var(--status-arrived-foreground))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

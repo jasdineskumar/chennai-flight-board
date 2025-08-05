@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      flights: {
+        Row: {
+          actual_arrival: string | null
+          actual_departure: string | null
+          aircraft_type: string | null
+          airline: string
+          created_at: string
+          destination: string | null
+          flight_number: string
+          flight_type: string
+          gate: string | null
+          id: string
+          origin: string | null
+          scheduled_arrival: string | null
+          scheduled_departure: string | null
+          status: string
+          terminal: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_arrival?: string | null
+          actual_departure?: string | null
+          aircraft_type?: string | null
+          airline: string
+          created_at?: string
+          destination?: string | null
+          flight_number: string
+          flight_type: string
+          gate?: string | null
+          id?: string
+          origin?: string | null
+          scheduled_arrival?: string | null
+          scheduled_departure?: string | null
+          status?: string
+          terminal?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_arrival?: string | null
+          actual_departure?: string | null
+          aircraft_type?: string | null
+          airline?: string
+          created_at?: string
+          destination?: string | null
+          flight_number?: string
+          flight_type?: string
+          gate?: string | null
+          id?: string
+          origin?: string | null
+          scheduled_arrival?: string | null
+          scheduled_departure?: string | null
+          status?: string
+          terminal?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
