@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Plane, Home, List, Plus, Settings } from "lucide-react";
+import { Plane, Home, List, Plus, Settings, Monitor } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -9,6 +9,7 @@ const Navigation = () => {
     { path: "/", label: "Dashboard", icon: Home },
     { path: "/flights", label: "Flights", icon: List },
     { path: "/add-flight", label: "Add Flight", icon: Plus },
+    { path: "/display", label: "FIDS Display", icon: Monitor },
     { path: "/settings", label: "Settings", icon: Settings },
   ];
 
