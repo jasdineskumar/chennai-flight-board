@@ -73,6 +73,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				fids: {
+					dark: 'hsl(var(--fids-dark))',
+					primary: 'hsl(var(--fids-primary))',
+					accent: 'hsl(var(--fids-accent))',
+					text: 'hsl(var(--fids-text))',
+					'text-secondary': 'hsl(var(--fids-text-secondary))',
+					card: 'hsl(var(--fids-card))',
+					'card-hover': 'hsl(var(--fids-card-hover))',
+					border: 'hsl(var(--fids-border))'
 				}
 			},
 			borderRadius: {
