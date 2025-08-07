@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Plane, Home, List, Plus, Settings, Monitor } from "lucide-react";
+import { Plane, Home, List, Plus, Settings, Monitor, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navigation = () => {
   const location = useLocation();
+  const { signOut } = useAuth();
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: Home },
@@ -24,7 +27,7 @@ const Navigation = () => {
           </div>
         </div>
         
-        <div className="flex space-x-1">
+        <div className="flex items-center space-x-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -45,6 +48,15 @@ const Navigation = () => {
               </Link>
             );
           })}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={signOut}
+            className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out</span>
+          </Button>
         </div>
       </div>
     </nav>
