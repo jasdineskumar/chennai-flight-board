@@ -15,6 +15,8 @@ interface FidsSettingsProps {
     showSystemTime: boolean;
     kioskMode: boolean;
     autoFullscreen: boolean;
+    flightsPerPage: number;
+    pageInterval: number;
   };
   onSettingsChange: (newSettings: any) => void;
 }
@@ -87,6 +89,42 @@ const FidsSettings = ({ isOpen, onClose, settings, onSettingsChange }: FidsSetti
             </Select>
           </div>
 
+          {/* Pagination Settings */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Palette className="h-5 w-5 text-fids-accent" />
+              <Label className="text-fids-text font-medium">Display Pagination</Label>
+            </div>
+            
+            <div className="space-y-3 ml-7">
+              <div className="space-y-2">
+                <Label className="text-fids-text-secondary">Flights per Page: {settings.flightsPerPage}</Label>
+                <input
+                  type="range"
+                  min="4"
+                  max="12"
+                  step="1"
+                  value={settings.flightsPerPage}
+                  onChange={(e) => updateSetting('flightsPerPage', parseInt(e.target.value))}
+                  className="w-full h-2 bg-fids-dark rounded-lg appearance-none cursor-pointer slider"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label className="text-fids-text-secondary">Page Change Interval: {settings.pageInterval}s</Label>
+                <input
+                  type="range"
+                  min="5"
+                  max="60"
+                  step="5"
+                  value={settings.pageInterval}
+                  onChange={(e) => updateSetting('pageInterval', parseInt(e.target.value))}
+                  className="w-full h-2 bg-fids-dark rounded-lg appearance-none cursor-pointer slider"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Display Options */}
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
@@ -140,6 +178,14 @@ const FidsSettings = ({ isOpen, onClose, settings, onSettingsChange }: FidsSetti
               <div className="flex justify-between text-sm">
                 <span className="text-fids-text-secondary">Esc</span>
                 <span className="text-fids-text">Close Settings</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-fids-text-secondary">D</span>
+                <span className="text-fids-text">Show Domestic Flights</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-fids-text-secondary">I</span>
+                <span className="text-fids-text">Show International Flights</span>
               </div>
             </div>
           </div>

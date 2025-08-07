@@ -8,11 +8,16 @@ const airlines = [
   "Lufthansa", "Turkish Airlines", "Thai Airways", "Malaysia Airlines"
 ];
 
-const destinations = [
+const domesticDestinations = [
   "Mumbai (BOM)", "Delhi (DEL)", "Bangalore (BLR)", "Hyderabad (HYD)",
   "Kolkata (CCU)", "Pune (PNQ)", "Ahmedabad (AMD)", "Goa (GOI)",
+  "Kochi (COK)", "Trivandrum (TRV)", "Coimbatore (CJB)", "Madurai (IXM)"
+];
+
+const internationalDestinations = [
   "Dubai (DXB)", "Singapore (SIN)", "Kuala Lumpur (KUL)", "Bangkok (BKK)",
-  "London (LHR)", "Frankfurt (FRA)", "Paris (CDG)", "Amsterdam (AMS)"
+  "London (LHR)", "Frankfurt (FRA)", "Paris (CDG)", "Amsterdam (AMS)",
+  "New York (JFK)", "Tokyo (NRT)", "Hong Kong (HKG)", "Sydney (SYD)"
 ];
 
 const aircraftTypes = [
@@ -26,7 +31,7 @@ const statuses: Flight['status'][] = [
 const gates = ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3", "D1", "D2"];
 const terminals = ["1", "2", "3"];
 
-export function generateMockFlights(count: number = 15): Flight[] {
+export function generateMockFlights(count: number = 15, type: 'domestic' | 'international' = 'domestic'): Flight[] {
   const flights: Flight[] = [];
   const now = new Date();
 
@@ -50,7 +55,9 @@ export function generateMockFlights(count: number = 15): Flight[] {
       airline: airlines[Math.floor(Math.random() * airlines.length)],
       aircraft_type: aircraftTypes[Math.floor(Math.random() * aircraftTypes.length)],
       origin: "Chennai (MAA)",
-      destination: destinations[Math.floor(Math.random() * destinations.length)],
+      destination: type === 'domestic' 
+        ? domesticDestinations[Math.floor(Math.random() * domesticDestinations.length)]
+        : internationalDestinations[Math.floor(Math.random() * internationalDestinations.length)],
       scheduled_departure: scheduledDeparture.toISOString(),
       scheduled_arrival: addHours(scheduledDeparture, 1 + Math.random() * 8).toISOString(),
       actual_departure: actualDeparture,
@@ -72,9 +79,9 @@ export function generateMockFlights(count: number = 15): Flight[] {
 }
 
 export const mockFlightService = {
-  async getUpcomingDepartures(): Promise<Flight[]> {
+  async getUpcomingDepartures(type: 'domestic' | 'international' = 'domestic'): Promise<Flight[]> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-    return generateMockFlights();
+    return generateMockFlights(20, type); // Generate more flights for pagination
   }
 };

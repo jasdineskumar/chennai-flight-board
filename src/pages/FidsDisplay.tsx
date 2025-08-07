@@ -25,8 +25,12 @@ const FidsDisplay = () => {
     refreshInterval: 60,
     showSystemTime: true,
     kioskMode: false,
-    autoFullscreen: false
+    autoFullscreen: false,
+    flightsPerPage: 8,
+    pageInterval: 15 // seconds between pages
   });
+  const [currentPage, setCurrentPage] = useState(0);
+  const [displayType, setDisplayType] = useState<'domestic' | 'international'>('domestic');
 
   const fetchFlights = useCallback(async () => {
     try {
@@ -34,7 +38,7 @@ const FidsDisplay = () => {
       
       if (settings.useMockData) {
         // Use mock data
-        const mockFlights = await mockFlightService.getUpcomingDepartures();
+        const mockFlights = await mockFlightService.getUpcomingDepartures(displayType);
         setFlights(mockFlights);
         setLastUpdated(new Date());
         setLoading(false);
@@ -58,7 +62,16 @@ const FidsDisplay = () => {
         return;
       }
 
-      setFlights((data || []) as Flight[]);
+      // Filter by domestic/international
+      const filteredFlights = (data || []).filter(flight => {
+        const isDomestic = flight.destination?.includes('(') && 
+          ['BOM', 'DEL', 'BLR', 'HYD', 'CCU', 'PNQ', 'AMD', 'GOI', 'COK', 'TRV'].some(code => 
+            flight.destination?.includes(code)
+          );
+        return displayType === 'domestic' ? isDomestic : !isDomestic;
+      });
+
+      setFlights(filteredFlights as Flight[]);
       setLastUpdated(new Date());
       setLoading(false);
     } catch (error) {
@@ -66,16 +79,29 @@ const FidsDisplay = () => {
       setConnectionStatus('disconnected');
       setLoading(false);
     }
-  }, [settings.useMockData]);
+  }, [settings.useMockData, displayType]);
 
   useEffect(() => {
     fetchFlights();
+    setCurrentPage(0); // Reset to first page when display type changes
     
     // Auto-refresh based on settings
     const interval = setInterval(fetchFlights, settings.refreshInterval * 1000);
     
     return () => clearInterval(interval);
   }, [fetchFlights, settings.refreshInterval]);
+
+  // Pagination - cycle through pages
+  useEffect(() => {
+    const totalPages = Math.ceil(flights.length / settings.flightsPerPage);
+    if (totalPages <= 1) return;
+
+    const pageInterval = setInterval(() => {
+      setCurrentPage(prev => (prev + 1) % totalPages);
+    }, settings.pageInterval * 1000);
+
+    return () => clearInterval(pageInterval);
+  }, [flights.length, settings.flightsPerPage, settings.pageInterval]);
 
   // Update current time every second
   useEffect(() => {
@@ -115,6 +141,14 @@ const FidsDisplay = () => {
         case 'a':
           event.preventDefault();
           setAdminMode(!adminMode);
+          break;
+        case 'd':
+          event.preventDefault();
+          setDisplayType('domestic');
+          break;
+        case 'i':
+          event.preventDefault();
+          setDisplayType('international');
           break;
       }
     };
@@ -204,6 +238,22 @@ const FidsDisplay = () => {
             <Maximize className="h-4 w-4 mr-2" />
             {isFullscreen ? 'Exit' : 'Fullscreen'}
           </Button>
+          <Button
+            variant={displayType === 'domestic' ? 'default' : 'secondary'}
+            size="sm"
+            onClick={() => setDisplayType('domestic')}
+            className="bg-fids-card border-fids-border text-fids-text hover:bg-fids-card-hover"
+          >
+            Domestic
+          </Button>
+          <Button
+            variant={displayType === 'international' ? 'default' : 'secondary'}
+            size="sm"
+            onClick={() => setDisplayType('international')}
+            className="bg-fids-card border-fids-border text-fids-text hover:bg-fids-card-hover"
+          >
+            International
+          </Button>
         </div>
       )}
 
@@ -222,7 +272,9 @@ const FidsDisplay = () => {
             <Plane className="h-12 w-12 text-white" />
             <div>
               <h1 className="text-4xl font-bold text-white">Chennai Airport</h1>
-              <p className="text-xl text-fids-accent font-medium">Flight Information Display System</p>
+              <p className="text-xl text-fids-accent font-medium">
+                {displayType === 'domestic' ? 'Domestic' : 'International'} Departures - FIDS
+              </p>
               {settings.useMockData && (
                 <p className="text-sm text-yellow-200 mt-1">
                   ⚠️ DEMO MODE - Using Mock Data
@@ -257,89 +309,107 @@ const FidsDisplay = () => {
 
       {/* Flight Information */}
       <div className="p-8">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-fids-accent mb-2">
-            Upcoming Departures - Next 3 Hours
-          </h2>
-          <p className="text-xl text-fids-text-secondary">
-            Showing {flights.length} flights
-          </p>
+        <div className="mb-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-fids-accent mb-2">
+                {displayType === 'domestic' ? 'Domestic' : 'International'} Departures - Next 3 Hours
+              </h2>
+              <p className="text-xl text-fids-text-secondary">
+                Showing {Math.min(settings.flightsPerPage, flights.length - currentPage * settings.flightsPerPage)} of {flights.length} flights
+              </p>
+            </div>
+            {Math.ceil(flights.length / settings.flightsPerPage) > 1 && (
+              <div className="text-right">
+                <p className="text-2xl font-bold text-fids-accent">
+                  Page {currentPage + 1} of {Math.ceil(flights.length / settings.flightsPerPage)}
+                </p>
+                <p className="text-lg text-fids-text-secondary">
+                  Next page in {settings.pageInterval - (Math.floor(Date.now() / 1000) % settings.pageInterval)} seconds
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {flights.length === 0 ? (
           <div className="text-center py-16">
             <Users className="h-24 w-24 text-fids-text-secondary mx-auto mb-6" />
             <h3 className="text-3xl font-bold text-fids-text mb-4">No Upcoming Flights</h3>
-            <p className="text-xl text-fids-text-secondary">No flights scheduled in the next 3 hours</p>
+            <p className="text-xl text-fids-text-secondary">
+              No {displayType} flights scheduled in the next 3 hours
+            </p>
           </div>
         ) : (
-          <div className="grid gap-6">
-            {flights.map((flight) => (
+          <div className="grid gap-4">
+            {flights
+              .slice(currentPage * settings.flightsPerPage, (currentPage + 1) * settings.flightsPerPage)
+              .map((flight) => (
               <div
                 key={flight.id}
-                className="bg-fids-card border border-fids-border rounded-lg p-6 hover:bg-fids-card-hover transition-colors"
+                className="bg-fids-card border border-fids-border rounded-lg p-4 hover:bg-fids-card-hover transition-colors"
               >
-                <div className="grid grid-cols-12 gap-6 items-center">
+                <div className="grid grid-cols-12 gap-4 items-center">
                   {/* Flight Number & Airline */}
                   <div className="col-span-2">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Hash className="h-6 w-6 text-fids-accent" />
-                      <span className="text-2xl font-bold text-fids-accent">{flight.flight_number}</span>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Hash className="h-5 w-5 text-fids-accent" />
+                      <span className="text-xl font-bold text-fids-accent">{flight.flight_number}</span>
                     </div>
-                    <p className="text-lg font-medium text-fids-text">{flight.airline}</p>
+                    <p className="text-base font-medium text-fids-text">{flight.airline}</p>
                     {flight.aircraft_type && (
-                      <p className="text-base text-fids-text-secondary">{flight.aircraft_type}</p>
+                      <p className="text-sm text-fids-text-secondary">{flight.aircraft_type}</p>
                     )}
                   </div>
 
                   {/* Destination */}
-                  <div className="col-span-2">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <MapPin className="h-6 w-6 text-fids-accent" />
-                      <span className="text-lg font-medium text-fids-text-secondary">To</span>
+                  <div className="col-span-3">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <MapPin className="h-5 w-5 text-fids-accent" />
+                      <span className="text-base font-medium text-fids-text-secondary">To</span>
                     </div>
-                    <p className="text-2xl font-bold text-fids-text">{flight.destination || 'TBA'}</p>
+                    <p className="text-xl font-bold text-fids-text">{flight.destination || 'TBA'}</p>
                   </div>
 
                   {/* Scheduled Time */}
                   <div className="col-span-2">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Clock className="h-6 w-6 text-fids-accent" />
-                      <span className="text-lg font-medium text-fids-text-secondary">Scheduled</span>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Clock className="h-5 w-5 text-fids-accent" />
+                      <span className="text-base font-medium text-fids-text-secondary">Scheduled</span>
                     </div>
-                    <p className="text-2xl font-bold text-fids-text">
+                    <p className="text-xl font-bold text-fids-text">
                       {formatTime(flight.scheduled_departure)}
                     </p>
-                    <p className="text-base text-fids-text-secondary">
+                    <p className="text-sm text-fids-text-secondary">
                       {formatDate(flight.scheduled_departure)}
                     </p>
                   </div>
 
                   {/* Actual Time */}
                   <div className="col-span-2">
-                    <div className="mb-2">
-                      <span className="text-lg font-medium text-fids-text-secondary">Actual</span>
+                    <div className="mb-1">
+                      <span className="text-base font-medium text-fids-text-secondary">Actual</span>
                     </div>
-                    <p className="text-2xl font-bold text-fids-text">
+                    <p className="text-xl font-bold text-fids-text">
                       {formatTime(flight.actual_departure)}
                     </p>
                   </div>
 
                   {/* Gate & Terminal */}
                   <div className="col-span-2">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <Building className="h-6 w-6 text-fids-accent" />
-                      <span className="text-lg font-medium text-fids-text-secondary">Gate</span>
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Building className="h-5 w-5 text-fids-accent" />
+                      <span className="text-base font-medium text-fids-text-secondary">Gate</span>
                     </div>
-                    <p className="text-2xl font-bold text-fids-text">{flight.gate || 'TBA'}</p>
+                    <p className="text-xl font-bold text-fids-text">{flight.gate || 'TBA'}</p>
                     {flight.terminal && (
-                      <p className="text-base text-fids-text-secondary">Terminal {flight.terminal}</p>
+                      <p className="text-sm text-fids-text-secondary">Terminal {flight.terminal}</p>
                     )}
                   </div>
 
                   {/* Status */}
-                  <div className="col-span-2 text-right">
-                    <StatusBadge status={flight.status} className="text-xl px-4 py-2" />
+                  <div className="col-span-1 text-right">
+                    <StatusBadge status={flight.status} className="text-lg px-3 py-1" />
                   </div>
                 </div>
               </div>
@@ -368,7 +438,7 @@ const FidsDisplay = () => {
             </p>
             {!adminMode && (
               <p className="text-sm text-fids-accent">
-                Press 'A' for admin controls
+                Press 'A' for admin | 'D' for domestic | 'I' for international
               </p>
             )}
           </div>
