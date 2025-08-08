@@ -9,7 +9,7 @@ const Navigation = () => {
   const { signOut } = useAuth();
 
   const navItems = [
-    { path: "/", label: "Dashboard", icon: Home },
+    { path: "/dashboard", label: "Dashboard", icon: Home },
     { path: "/flights", label: "Flights", icon: List },
     { path: "/add-flight", label: "Add Flight", icon: Plus },
     { path: "/display", label: "FIDS Display", icon: Monitor },
