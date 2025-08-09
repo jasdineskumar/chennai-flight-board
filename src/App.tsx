@@ -28,10 +28,20 @@ const AppContent = () => {
   }
 
   const ProtectedLayout = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
+
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
+        </div>
+      );
+    }
+
     if (!user) {
       return <Navigate to="/auth" replace />;
     }
+
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -41,7 +51,6 @@ const AppContent = () => {
       </div>
     );
   };
-
   return (
     <BrowserRouter>
       <Routes>
