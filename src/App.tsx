@@ -12,7 +12,6 @@ import NotFound from "./pages/NotFound";
 import FidsDisplay from "./pages/FidsDisplay";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
-import Navigation from "./components/Navigation";
 import { useAuth } from "./hooks/useAuth";
 import { LayoutDashboard, Plane, PlusCircle, Monitor, Settings as SettingsIcon } from "lucide-react";
 
@@ -54,7 +53,6 @@ const AppContent = () => {
 
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <NavBar items={navItems} />
         <main className="max-w-7xl mx-auto px-6 py-8">
           <Outlet />
