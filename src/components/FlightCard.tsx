@@ -26,9 +26,17 @@ const FlightCard = ({ flight, onClick }: FlightCardProps) => {
   const location = isArrival ? flight.origin : flight.destination;
 
   return (
-    <Card 
-      className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary"
+    <Card
+      className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary hover-scale animate-fade-in"
       onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : -1}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">

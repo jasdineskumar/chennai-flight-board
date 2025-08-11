@@ -54,7 +54,7 @@ const AppContent = () => {
     return (
       <div className="min-h-screen bg-background">
         <NavBar items={navItems} />
-        <main className="max-w-7xl mx-auto px-6 py-8">
+        <main className="max-w-7xl mx-auto px-6 py-8 animate-fade-in">
           <Outlet />
         </main>
       </div>

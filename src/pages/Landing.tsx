@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plane, Clock, Monitor, ShieldCheck, LayoutGrid } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 
 const sampleDomestic = [
   { flight: "AI 342", to: "Mumbai", time: "12:30", gate: "A4", status: "On Time" },
@@ -121,6 +122,61 @@ const Landing = () => {
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               Supabase authentication with protected dashboards.
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Spotlight carousel */}
+        <section className="w-full max-w-5xl mb-8">
+          <Card className="bg-card/80 border-border/50">
+            <CardHeader className="flex items-start justify-between gap-4">
+              <div>
+                <CardTitle>Spotlight</CardTitle>
+                <CardDescription>Swipe through quick highlights</CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Carousel opts={{ loop: true }}>
+                <CarouselContent>
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <div className="rounded-lg border border-border p-6 hover-scale animate-fade-in">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Clock className="h-5 w-5 text-primary" />
+                          <h3 className="font-medium">Live Status</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Instant updates with minimal latency.</p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <div className="rounded-lg border border-border p-6 hover-scale animate-fade-in">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Monitor className="h-5 w-5 text-primary" />
+                          <h3 className="font-medium">TV Mode</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Crystal-clear layouts for big screens.</p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-4">
+                      <div className="rounded-lg border border-border p-6 hover-scale animate-fade-in">
+                        <div className="flex items-center gap-3 mb-2">
+                          <ShieldCheck className="h-5 w-5 text-primary" />
+                          <h3 className="font-medium">Secure Access</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">RLS + RBAC with Supabase Auth.</p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <div className="flex items-center justify-end gap-2 mt-4">
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </div>
+              </Carousel>
             </CardContent>
           </Card>
         </section>

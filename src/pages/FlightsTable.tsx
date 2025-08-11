@@ -112,7 +112,7 @@ const FlightsTable = () => {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="hover-scale animate-fade-in">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Filter className="h-5 w-5" />
@@ -158,7 +158,7 @@ const FlightsTable = () => {
               </SelectContent>
             </Select>
 
-            <Button onClick={fetchFlights} variant="outline">
+            <Button onClick={fetchFlights} variant="outline" className="hover-scale">
               <Plane className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -188,7 +188,7 @@ const FlightsTable = () => {
                 {filteredFlights.map((flight) => (
                   <TableRow 
                     key={flight.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="cursor-pointer hover:bg-muted/50 transition-colors animate-fade-in"
                     onClick={() => handleEditFlight(flight)}
                   >
                     <TableCell className="font-medium">{flight.flight_number}</TableCell>
